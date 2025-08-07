@@ -3,10 +3,9 @@ package eu.pb4.stylednicknames.config;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import eu.pb4.stylednicknames.StyledNicknames;
-import eu.pb4.stylednicknames.StyledNicknamesMod;
 import eu.pb4.stylednicknames.config.data.ConfigData;
 import eu.pb4.stylednicknames.config.data.VersionConfigData;
-import net.fabricmc.loader.api.FabricLoader;
+import eu.pb4.stylednicknames.platform.Services;
 import org.apache.commons.io.IOUtils;
 
 import java.io.*;
@@ -25,7 +24,7 @@ public class ConfigManager {
         CONFIG = null;
         try {
             ConfigData config;
-            File configFile = new File(FabricLoader.getInstance().getConfigDir().toFile(), "styled-nicknames.json");
+            File configFile = new File(Services.PLATFORM.getConfigDirectory().toFile(),StyledNicknames.MOD_ID+ ".json");
 
 
             if (configFile.exists()) {
