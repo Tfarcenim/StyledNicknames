@@ -1,13 +1,12 @@
 {
     "required": true,
     "minVersion": "0.8",
-    "package": "com.example.examplemod.mixin",
+    "package": "eu.pb4.stylednicknames.mixin",
     "refmap": "${mod_id}.refmap.json",
     "compatibilityLevel": "JAVA_17",
     "mixins": [
     ],
     "client": [
-      "eu.pb4.stylednicknames.mixin.MixinTitleScreen"
     ],
     "server": [
     ],
@@ -15,3 +14,4 @@
         "defaultRequire": 1
     }
 }
+

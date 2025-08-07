@@ -25,7 +25,7 @@
     ]
   },
   "mixins": [
-    "stylednicknames.mixins.json",
+    "styled_nicknames.mixins.json",
     "stylednicknames.fabric.mixins.json"
   ],
 
