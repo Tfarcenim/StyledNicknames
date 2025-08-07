@@ -11,10 +11,9 @@ import eu.pb4.placeholders.api.parsers.TextParserV1;
 import eu.pb4.stylednicknames.NicknameHolder;
 import eu.pb4.stylednicknames.StyledNicknamesMod;
 import eu.pb4.stylednicknames.config.ConfigManager;
-import me.drex.vanish.api.VanishAPI;
+import eu.pb4.stylednicknames.platform.Services;
 import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.SharedSuggestionProvider;
@@ -31,7 +30,7 @@ import static net.minecraft.commands.Commands.literal;
 
 
 public class Commands {
-    public static final boolean VANISH = FabricLoader.getInstance().isModLoaded("melius-vanish");
+    public static final boolean VANISH = Services.PLATFORM.isModLoaded("melius-vanish");
 
     public static void register() {
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
@@ -224,9 +223,9 @@ public class Commands {
     }
 
     private static boolean canSeePlayer(ServerPlayer player, CommandSourceStack viewing) {
-        if (VANISH) {
-            return VanishAPI.canSeePlayer(player.server, player.getUUID(), viewing);
-        }
+    //    if (VANISH) {
+    //        return VanishAPI.canSeePlayer(player.server, player.getUUID(), viewing);
+    //    }
         return true;
     }
 

@@ -48,6 +48,8 @@ sourceSets.main.resources.srcDir 'src/generated/resources'
 dependencies {
     compileOnly project(":common")
     annotationProcessor("org.spongepowered:mixin:0.8.5-SNAPSHOT:processor")
+
+    modImplementation 'com.github.1foxy2:TextPlaceholderAPI-neoforge:2.1.3'
 }
 
 jar {
