@@ -20,6 +20,21 @@ public interface NicknameHolder {
         }
 
         @Override
+        public void directlySetNickname(String nickname) {
+
+        }
+
+        @Override
+        public void directlySetParsedNickname(Component nickname) {
+
+        }
+
+        @Override
+        public void setRequirePermission(boolean permission) {
+
+        }
+
+        @Override
         public @Nullable Component styledNicknames$getParsed() {
             return null;
         }
@@ -72,6 +87,10 @@ public interface NicknameHolder {
 
     @Nullable
     String styledNicknames$get();
+
+    void directlySetNickname(String nickname);
+    void directlySetParsedNickname(Component nickname);
+    void setRequirePermission(boolean permission);
 
     @Nullable
     Component styledNicknames$getParsed();

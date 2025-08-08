@@ -27,7 +27,7 @@ public abstract class ServerPlayerEntityMixin extends Player {
         try {
             if (ConfigManager.isEnabled()) {
                 ConfigData data = ConfigManager.getConfig().configData;
-                if (data.changePlayerListName) {
+                    if (data.changePlayerListName) {
                     var holder = NicknameHolder.of(this);
                     if (holder != null && holder.styledNicknames$shouldDisplay()) {
                         cir.setReturnValue(PlayerTeam.formatNameForTeam(this.getTeam(), holder.styledNicknames$getOutput()));

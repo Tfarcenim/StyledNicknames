@@ -4,7 +4,9 @@ import eu.pb4.placeholders.api.Placeholders;
 import eu.pb4.placeholders.api.TextParserUtils;
 import eu.pb4.placeholders.api.parsers.TextParserV1;
 import eu.pb4.playerdata.api.PlayerDataApi;
+import eu.pb4.stylednicknames.MixinHooks;
 import eu.pb4.stylednicknames.NicknameHolder;
+import eu.pb4.stylednicknames.StyledNicknames;
 import eu.pb4.stylednicknames.config.Config;
 import eu.pb4.stylednicknames.config.ConfigManager;
 import me.lucko.fabric.api.permissions.v0.Permissions;
@@ -26,8 +28,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import static eu.pb4.stylednicknames.StyledNicknames.id;
-
 
 @Mixin(ServerGamePacketListenerImpl.class)
 public class ServerPlayNetworkHandlerMixin implements NicknameHolder {
@@ -43,8 +43,8 @@ public class ServerPlayNetworkHandlerMixin implements NicknameHolder {
     @Override
     public void styledNicknames$loadData() {
         try {
-            StringTag nickname = PlayerDataApi.getGlobalDataFor(player, id("nickname"), StringTag.TYPE);
-            ByteTag permissions = PlayerDataApi.getGlobalDataFor(player, id("permission"),ByteTag.TYPE);
+            StringTag nickname = PlayerDataApi.getGlobalDataFor(player, StyledNicknames.id("nickname"), StringTag.TYPE);
+            ByteTag permissions = PlayerDataApi.getGlobalDataFor(player, StyledNicknames.id("permission"),ByteTag.TYPE);
 
             if (nickname != null) {
                 this.styledNicknames$set(nickname.getAsString(), permissions.getAsByte() > 0);
@@ -56,52 +56,22 @@ public class ServerPlayNetworkHandlerMixin implements NicknameHolder {
 
     @Override
     public void styledNicknames$set(String nickname, boolean requirePermission) {
-        Config config = ConfigManager.getConfig();
-        CommandSourceStack source = player.createCommandSourceStack();
-        if (nickname == null || nickname.isEmpty() || (requirePermission && !Permissions.check(source, "stylednicknames.use", ConfigManager.getConfig().configData.allowByDefault ? 0 : 2))) {
-            this.styledNicknames$nickname = null;
-            this.styledNicknames$requirePermission = false;
-            this.styledNicknames$parsedNicknameRaw = null;
-            PlayerDataApi.setGlobalDataFor(this.player, id("nickname"), null);
-            PlayerDataApi.setGlobalDataFor(this.player, id("permission"), ByteTag.valueOf(false));
-        } else {
-            this.styledNicknames$nickname = nickname;
-            this.styledNicknames$requirePermission = requirePermission;
-            PlayerDataApi.setGlobalDataFor(this.player, id("nickname"), StringTag.valueOf(nickname));
-            PlayerDataApi.setGlobalDataFor(this.player, id("permission"), ByteTag.valueOf(requirePermission));
+        MixinHooks.styledNicknames$set((ServerGamePacketListenerImpl)(Object) this,nickname,requirePermission);
+    }
 
-            var handlers = new HashMap<String, TextParserV1.TagNodeBuilder>();
+    @Override
+    public void directlySetNickname(String nickname) {
+        styledNicknames$nickname = nickname;
+    }
 
+    @Override
+    public void directlySetParsedNickname(Component nickname) {
+        styledNicknames$parsedNicknameRaw = nickname;
+    }
 
-            for (var entry : TextParserV1.SAFE.getTags()) {
-                if ((config.defaultFormattingCodes.getBoolean(entry.name())
-                        || Permissions.check(this.player, "stylednicknames.format." + entry.name(), 2))) {
-
-                    handlers.put(entry.name(), entry.parser());
-
-                    if (entry.aliases() != null) {
-                        for (var a : entry.aliases()) {
-                            handlers.put(a, entry.parser());
-                        }
-                    }
-                }
-            }
-
-            if (config.configData.allowLegacyFormatting) {
-                for (ChatFormatting formatting : ChatFormatting.values()) {
-                    if (handlers.get(formatting.getName()) != null) {
-                        nickname = nickname.replace(String.copyValueOf(new char[]{'&', formatting.getChar()}), "<" + formatting.getName() + ">");
-                    }
-                }
-            }
-
-            this.styledNicknames$parsedNicknameRaw = TextParserUtils.formatText(nickname, handlers::get);
-        }
-
-        if (config.configData.changePlayerListName) {
-            Objects.requireNonNull(this.player.getServer()).getPlayerList().broadcastAll(
-                    new ClientboundPlayerInfoUpdatePacket(ClientboundPlayerInfoUpdatePacket.Action.UPDATE_DISPLAY_NAME, this.player));
-        }
+    @Override
+    public void setRequirePermission(boolean permission) {
+        this.styledNicknames$requirePermission = permission;
     }
 
     @Override

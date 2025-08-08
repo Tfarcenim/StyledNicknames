@@ -27,12 +27,19 @@ legacyForge {
         client {
             client()
         }
+
+        client2 {
+            client()
+            programArguments.addAll '--username', 'Dev1'
+            gameDirectory = project.file('run2')
+        }
         data {
             data()
             programArguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
         }
         server {
             server()
+            gameDirectory = project.file('runserver')
         }
     }
 

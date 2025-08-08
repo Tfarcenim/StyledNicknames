@@ -7,6 +7,7 @@ import eu.pb4.stylednicknames.config.ConfigManager;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterCommandsEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.server.ServerStartedEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -25,6 +26,7 @@ public class StyledNicknamesForge {
 		MinecraftForge.EVENT_BUS.addListener(this::serverStarted);
 		MinecraftForge.EVENT_BUS.addListener(this::serverStarting);
 		MinecraftForge.EVENT_BUS.addListener(this::commands);
+		MinecraftForge.EVENT_BUS.addListener(this::getTabName);
 
 		Placeholders.register(StyledNicknames.id("display_name"), (ctx, arg) -> {
 			if (ctx.hasPlayer()) {
@@ -39,12 +41,16 @@ public class StyledNicknamesForge {
 		});
 	}
 
+	void getTabName(PlayerEvent.TabListNameFormat event) {
+
+	}
+
 	void commands(RegisterCommandsEvent event) {
 		StyledNicknameCommands.register(event.getDispatcher());
 	}
 
 	void serverStarted(ServerStartedEvent event) {
-		CardboardWarning.checkAndAnnounce();
+		//CardboardWarning.checkAndAnnounce();
 	}
 
 	void serverStarting(ServerStartingEvent event) {
