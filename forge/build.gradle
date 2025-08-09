@@ -57,7 +57,7 @@ dependencies {
     annotationProcessor("org.spongepowered:mixin:0.8.5-SNAPSHOT:processor")
     compileOnly group: 'org.jetbrains',name:'annotations',version: '24.1.0'
 
-    modImplementation 'com.github.1foxy2:TextPlaceholderAPI-neoforge:2.1.3'//https://github.com/1foxy2/TextPlaceholderAPI-neoforge/releases/tag/2.1.3
+    jarJar(modImplementation 'com.github.1foxy2:TextPlaceholderAPI-neoforge:2.1.3')//https://github.com/1foxy2/TextPlaceholderAPI-neoforge/releases/tag/2.1.3
 }
 
 jar {

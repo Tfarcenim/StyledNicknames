@@ -9,7 +9,8 @@ import com.mojang.brigadier.suggestion.SuggestionProvider;
 import eu.pb4.placeholders.api.Placeholders;
 import eu.pb4.placeholders.api.TextParserUtils;
 import eu.pb4.placeholders.api.parsers.TextParserV1;
-import eu.pb4.stylednicknames.NicknameHolder;
+import eu.pb4.stylednicknames.MixinHooks;
+import eu.pb4.stylednicknames.NickUtils;
 import eu.pb4.stylednicknames.StyledNicknames;
 import eu.pb4.stylednicknames.StyledNicknamesForge;
 import eu.pb4.stylednicknames.config.ConfigManager;
@@ -92,7 +93,7 @@ public class StyledNicknameCommands {
     }
 
     private static int change(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
-        NicknameHolder holder = NicknameHolder.of(context.getSource().getPlayerOrException());
+        ServerPlayer player = context.getSource().getPlayerOrException();
         var config = ConfigManager.getConfig();
         var nickname = context.getArgument("nickname", String.class);
         if (config.configData.maxLength > 0) {
@@ -127,15 +128,16 @@ public class StyledNicknameCommands {
             }
         }
 
-        holder.styledNicknames$set(nickname, true);
+        MixinHooks.styledNicknames$set(player,nickname, true);
         context.getSource().sendSuccess(() ->
-                        Placeholders.parseText(ConfigManager.getConfig().changeText, Placeholders.PREDEFINED_PLACEHOLDER_PATTERN, holder.styledNicknames$placeholdersCommand()),
+                        Placeholders.parseText(ConfigManager.getConfig().changeText, Placeholders.PREDEFINED_PLACEHOLDER_PATTERN, NickUtils.placeholdersCommand(player)),
                 false);
         return 0;
     }
 
     private static int reset(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
-        NicknameHolder.of(context.getSource().getPlayerOrException()).styledNicknames$set(null, false);
+        ServerPlayer player = context.getSource().getPlayerOrException();
+        MixinHooks.styledNicknames$set(player,null, false);
         context.getSource().sendSuccess(() ->
                         Placeholders.parseText(ConfigManager.getConfig().resetText, Placeholders.PREDEFINED_PLACEHOLDER_PATTERN, Map.of(
                                 "nickname", context.getSource().getPlayer().getName(),
@@ -147,14 +149,15 @@ public class StyledNicknameCommands {
 
     private static int changeOther(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         ServerPlayer player = EntityArgument.getPlayer(context, "player");
-        NicknameHolder.of(player).styledNicknames$set(context.getArgument("nickname", String.class), false);
-        context.getSource().sendSuccess(() -> Component.translatable("Changed nickname of %s to %s", player.getName(), NicknameHolder.of(player).styledNicknames$getOutputOrVanilla()), false);
+        String nickname = StringArgumentType.getString(context,"nickname");
+        MixinHooks.styledNicknames$set(player,nickname, false);
+        context.getSource().sendSuccess(() -> Component.translatable("Changed nickname of %s to %s", player.getName(), NickUtils.getOutputOrVanilla(player,true)), false);
         return 0;
     }
 
     private static int resetOther(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         ServerPlayer player = EntityArgument.getPlayer(context, "player");
-        NicknameHolder.of(player).styledNicknames$set(null, false);
+        MixinHooks.styledNicknames$set(player,null, false);
         context.getSource().sendSuccess(() -> Component.translatable("Cleared nickname of %s", player.getName()), false);
         return 0;
     }
@@ -164,7 +167,7 @@ public class StyledNicknameCommands {
         List<ServerPlayer> players = context.getSource().getServer().getPlayerList().getPlayers();
         Map<ServerPlayer, MutableComponent> foundPlayers = new HashMap<>();
         for (ServerPlayer player : players) {
-            MutableComponent output = NicknameHolder.of(player).styledNicknames$getOutput();
+            MutableComponent output = NickUtils.getOutputOrVanilla(player,false);
             if (output == null) continue;
             if (output.getString().equals(nickname) && canSeePlayer(player, context.getSource())) {
                 foundPlayers.put(player, output);
@@ -217,7 +220,7 @@ public class StyledNicknameCommands {
 
     private static Collection<String> getNicknameSuggestion(ServerPlayer player) {
         if (player != null) {
-            String nickname = NicknameHolder.of(player).styledNicknames$get();
+            String nickname = NickUtils.getNickname(player);
             if (nickname != null) {
                 return Collections.singletonList(nickname);
             }
@@ -236,7 +239,7 @@ public class StyledNicknameCommands {
         List<ServerPlayer> players = context.getSource().getServer().getPlayerList().getPlayers();
         Set<String> nicknames = players.stream()
                 .filter(player -> canSeePlayer(player, context.getSource()))
-                .map(player -> NicknameHolder.of(player).styledNicknames$getOutput())
+                .map(player -> NickUtils.getOutputOrVanilla(player,false))
                 .filter(Objects::nonNull)
                 .map(Component::getString)
                 .collect(Collectors.toSet());

@@ -1,22 +1,16 @@
 package eu.pb4.stylednicknames.mixin;
 
 import eu.pb4.placeholders.api.Placeholders;
-import eu.pb4.placeholders.api.TextParserUtils;
-import eu.pb4.placeholders.api.parsers.TextParserV1;
 import eu.pb4.playerdata.api.PlayerDataApi;
 import eu.pb4.stylednicknames.MixinHooks;
 import eu.pb4.stylednicknames.NicknameHolder;
 import eu.pb4.stylednicknames.StyledNicknames;
-import eu.pb4.stylednicknames.config.Config;
 import eu.pb4.stylednicknames.config.ConfigManager;
 import me.lucko.fabric.api.permissions.v0.Permissions;
-import net.minecraft.ChatFormatting;
-import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.nbt.ByteTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import org.jetbrains.annotations.Nullable;
@@ -24,9 +18,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 
 @Mixin(ServerGamePacketListenerImpl.class)

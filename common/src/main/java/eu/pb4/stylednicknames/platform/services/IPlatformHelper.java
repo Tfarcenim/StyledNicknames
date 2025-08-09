@@ -1,6 +1,14 @@
 package eu.pb4.stylednicknames.platform.services;
 
+import eu.pb4.stylednicknames.network.client.S2CModPacket;
+import eu.pb4.stylednicknames.network.client.S2CSyncPersistantDataPacket;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
+
 import java.nio.file.Path;
+import java.util.Collection;
+import java.util.function.Function;
 
 public interface IPlatformHelper {
 
@@ -38,4 +46,16 @@ public interface IPlatformHelper {
 
     Path getConfigDirectory();
 
+    void sendToClient(S2CModPacket msg, ServerPlayer player);
+
+    default void sendToClients(S2CModPacket msg, Collection<ServerPlayer> playerList) {
+        playerList.forEach(player -> sendToClient(msg,player));
+    }
+
+    void sendToTrackingClients(S2CModPacket msg, Entity entity);
+
+    <MSG extends S2CModPacket> void registerClientPacket(Class<MSG> packetLocation, Function<FriendlyByteBuf,MSG> reader);
+
+
+    void handle(S2CSyncPersistantDataPacket s2CSyncPersistantDataPacket);
 }

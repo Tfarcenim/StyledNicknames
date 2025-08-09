@@ -16,6 +16,7 @@ public class ConfigData {
     public boolean changeDisplayName = true;
     public boolean changePlayerListName = false;
     public boolean allowLegacyFormatting = false;
+    public boolean serverSideOnly = true;
     public String nicknameChangedMessage = "Your nickname has been changed to ${nickname}";
     public String nicknameResetMessage = "Your nickname has been removed!";
     public HashMap<String, Boolean> defaultEnabledFormatting = getDefaultFormatting();
